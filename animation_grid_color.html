@@ -1,0 +1,149 @@
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!--link rel='stylesheet' href='css/jquery-ui.css'-->
+    <!--script src="libs/jquery-3.6.1.js"></script-->
+    <!--script src="libs/jquery-ui.js"></script-->
+    <!--script src="libs/jquery.color.js"></script-->
+    <script src="libs/anime.js"></script>
+    <script>
+        // $(document).ready(function () {
+
+
+        //})
+    </script>
+    <style>
+.box-cont {
+    position:relative;
+    top:0;
+
+}
+    .box {
+        width: 50px;
+        height: 50px;
+        background-color: #000000;
+        position: absolute;
+        top: 100px;
+        left: 100px
+
+        /* border-radius: 0px*/
+    }
+    </style>
+
+</head>
+<body>
+    <div class="box-cont">
+    </div>
+
+    <script>
+        var col = 6,row = 9, w = 50, h= 50,padd=5, dock=0.2
+        var dur1 = 75, dur2 = 1500, delay1 = 750, delay2 = 1500
+        //var squeeze = 0.7
+        var col1 = "#00ffff", col2 = "#0000ff"
+        col = Math.floor((window.innerWidth-10)/(w+padd))
+        row = Math.floor((window.innerHeight-10)/(h+padd))
+        var boxCont = document.querySelector(".box-cont")
+        var ani1, ani2;
+        for (var j=0;j<row;j++){
+            for (var i=0;i<col;i++){
+                var el = document.createElement('div')
+                el.setAttribute("class","box")
+                el.style.width = w
+                el.style.height = h
+                el.style.left = i*(w+padd)
+                el.style.top = j*(h+padd)
+                el.setAttribute("data-index",j*col+i)
+                el.setAttribute("data-left",i*(w+padd))
+                el.setAttribute("data-top",j*(h+padd))
+                //el.addEventListener("mousedown",function(){})
+                el.addEventListener("touchstart",function(){
+                    index = this.getAttribute("data-index")
+                    dTop = this.getAttribute("data-top")
+                    dLeft = this.getAttribute("data-left")
+                    var rh = anime.stagger(
+                        [h*dock,h],{grid:[col,row],from:index}
+                    )
+                    var rw = anime.stagger(
+                        [w*dock,w],{grid:[col,row],from:index}
+                    )
+                    animeConfig.delay = 
+                        anime.stagger([0,delay1],{grid:[col,row],from:index})
+                    animeConfig.height = function (el,i,l) { 
+                        return rh(el,i,l)
+
+                    }
+                    animeConfig.top = function(el,i,l) {
+                        var newh = rh(el,i,l)
+                        return "+=" + (h-newh)/2
+                    }
+                    animeConfig.width = function (el,i,l) { 
+                        return rw(el,i,l)
+
+                    }
+                    animeConfig.left = function(el,i,l) {
+                        var neww = rw(el,i,l)
+                        return "+=" + (w-neww)/2
+                    }
+
+
+                    //animeConfig.backgroundColor = col2
+                    col1= "rgb(" + anime.random(0,255) + "," + anime.random(0,255)  + "," + anime.random(0,255)  + ")"
+                    animeConfig.backgroundColor = col1
+                    //animeConfig2.backgroundColor = col1
+
+
+                    ani1 = anime(animeConfig)
+                    ani1.play()
+                })
+                el.addEventListener("touchend",function(){
+                    index = this.getAttribute("data-index")
+                    dTop = this.getAttribute("data-top")
+                    dLeft = this.getAttribute("data-left")
+                    var rh = anime.stagger(
+                        [0,h],{grid:[col,row],from:index}
+                    )
+                    var rw = anime.stagger(
+                        [0,w],{grid:[col,row],from:index}
+                    )
+                    animeConfig2.delay = 
+                        anime.stagger([0,delay2],{grid:[col,row],from:index})
+
+                    animeConfig2.left = 
+                        function (el) {return el.getAttribute("data-left")}
+                    animeConfig2.top = 
+                        function (el) {return el.getAttribute("data-top")}
+                    //col2= col1 //"rgb(" + anime.random(0,255) + "," + anime.random(0,255)  + "," + anime.random(0,255)  + ")"
+
+
+                    ani1.pause()
+                    anime(animeConfig2).play()
+                })
+
+                boxCont.appendChild(el)
+            }
+        }
+
+        //alert(document.querySelectorAll(".box").length)
+
+
+        var animeConfig = {
+            targets: document.querySelectorAll(".box"),
+            width:anime.stagger(-1,{start:w,grid:[col,row]}),
+            height:anime.stagger(-1,{start:h,grid:[col,row]}),
+            easing:"easeOutQuad",
+            duration:dur1,
+            endDelay:10000,
+            //delay: anime.stagger(100,{grid:[col,row],from:9}),
+            autoplay:false
+        }
+        var animeConfig2 = {
+            targets: document.querySelectorAll(".box"),
+            width: w,
+            height: h,
+            duration: dur2,
+            easing: "easeOutElastic",
+            //delay: anime.stagger(100,{grid:[col,row],from:9}),
+            autoplay:false
+        }
+    </script>
+</body>
+
